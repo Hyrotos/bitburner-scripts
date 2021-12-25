@@ -31,7 +31,7 @@ export async function main(ns) {
     throw new Exception("Run the script from home");
   }
 
-  let args = ns.flags([['branch', 'main']])
+  let args = ns.flags([['branch', 'master']])
 
   await ns.wget(
     `https://raw.githubusercontent.com/hyrotos/bitburner-scripts/${args.branch}/src/initStartup.js?ts=${new Date().getTime()}`,
