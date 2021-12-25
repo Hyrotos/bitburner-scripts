@@ -147,7 +147,7 @@ class Report {
           `${formatNumber(server.minSecurity).padEnd(5)} | ` +
           `${formatMoney(server.data.moneyAvailable).padStart(9)}/` +
           `${formatMoney(server.maxMoney).padEnd(9)} | ` +
-          `${formatDuration(calculateWeakenTime(server.data, fetchPlayer()))}`
+          `${formatDuration(calculateWeakenTime(server.data, fetchPlayer()) * 1000)}`
       }
     }
     return str
@@ -301,7 +301,7 @@ class Targeter {
     if(hasFormulas(this.ns)) {
       return this.ns.formulas.hacking.hackTime(this.target.data, fetchPlayer())
     } else {
-      return calculateHackingTime(this.target.data, fetchPlayer())
+      return calculateHackingTime(this.target.data, fetchPlayer()) * 1000
     }
   }
   growTime() { return this.hackTime() * growTimeMultiplier }

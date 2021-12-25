@@ -71,7 +71,7 @@ export class BestHack {
         .filter((server) => server.hackingLvl <= player.hacking &&
                             server.data.hasAdminRights &&
                             server.maxMoney > 0 &&
-                            calculateWeakenTime(server.data, player) < maxWeakenTime)
+                            (calculateWeakenTime(server.data, player) * 1000) < maxWeakenTime)
       return filtered
     }
   }
