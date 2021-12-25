@@ -7,7 +7,7 @@ import { fetchServer } from 'network.js'
  **/
 export async function main(ns) {
   let player = ns.getPlayer()
-  player.busy = ns.isBusy()
+  player.busy = true /// ns.isBusy() //need SF4.1
   player.karma = ns.heart.break()
 
   if ( isFirstRun() ) {
