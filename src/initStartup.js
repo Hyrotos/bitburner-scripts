@@ -41,7 +41,6 @@ const filesToDownload = [
   '/satellites/serversObserver.js',
   '/satellites/torBuyer.js',
   '/startup/run.js',
-  'augPurchaser.js',
   'backdoor.js',
   'bestHack.js',
   'botnet.js',
@@ -65,21 +64,19 @@ const filesToDownload = [
   'weaken.js',
   'workForFactions.js',
 ]
-const baseUrl = 'https://raw.githubusercontent.com/jenheilemann/bitburner-scripts/'
-
+const baseUrl = 'https://raw.githubusercontent.com/crazykid080/bitburner-scripts-1/main/src'
 
 /**
  * @param {NS} ns
  **/
 export async function main(ns) {
   ns.disableLog("sleep")
-  const args = ns.flags([['branch', 'main']])
 
   for ( let filename of filesToDownload ) {
     ns.scriptKill(filename, 'home')
     ns.rm(filename)
     await ns.sleep(50)
-    await download(ns, filename, args.branch)
+    await download(ns, filename)
   }
   await ns.sleep(50)
   ns.tprint('Killed and deleted old scripts.')
@@ -91,9 +88,9 @@ export async function main(ns) {
   ns.spawn('/startup/run.js', 1)
 }
 
-export async function download(ns, filename, branch) {
+export async function download(ns, filename) {
   const fileUrl = filename.includes("/") ? filename : "/" + filename;
-  const path = baseUrl + branch + '/src' + fileUrl
+  const path = baseUrl + fileUrl
   ns.tprint(`Trying to download ${path}`)
   await ns.wget(path + '?ts=' + new Date().getTime(), filename)
 }

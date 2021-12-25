@@ -1,5 +1,6 @@
 import { fetchPlayer } from 'helpers.js'
 import { networkMapFree } from 'network.js'
+import { calculateWeakenTime } from '/formulae/hacking.js'
 
 const maxMoneyCoefficient = 1.25
 const growthCoefficient = 1.1
@@ -58,12 +59,22 @@ export class BestHack {
    */
   scoreAndFilterServers(ns, player) {
     let scores = this.calcServerScores()
-    let filtered = Object.values(scores)
-      .filter((server) => server.hackingLvl <= player.hacking &&
-                          server.data.hasAdminRights &&
-                          server.maxMoney > 0 &&
-                          ns.formulas.hacking.weakenTime(server.data, player) < maxWeakenTime)
-    return filtered
+    if(ns.ls("home", "\*\.exe").includes("formulas.exe")){
+      let filtered = Object.values(scores)
+        .filter((server) => server.hackingLvl <= player.hacking &&
+                            server.data.hasAdminRights &&
+                            server.maxMoney > 0 &&
+                            ns.formulas.hacking.weakenTime(server.data, player) < maxWeakenTime)
+      return filtered
+      
+    } else {
+      let filtered = Object.values(scores)
+        .filter((server) => server.hackingLvl <= player.hacking &&
+                            server.data.hasAdminRights &&
+                            server.maxMoney > 0 &&
+                            calculateWeakenTime(server.data, player) < maxWeakenTime)
+      return filtered
+    }
   }
 
   calcServerScores() {

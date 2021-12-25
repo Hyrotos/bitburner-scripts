@@ -15,7 +15,7 @@ const ramSizes = {
 }
 
 // Configuration. Change these as desired.
-const reservedRam = 50
+const reservedRam = 750
 const bufferTime = 30 //ms
 const hackDecimal = 0.05
 const sleepTime = 1000 //ms
@@ -66,6 +66,10 @@ export async function main(ns) {
     ns.print(reporter.output(ns, targets, processManager))
     await ns.sleep(sleepTime)
   }
+}
+
+function hasFormulas(ns){
+  return (ns.ls("home", "\.exe").includes("Formulas.exe"))
 }
 
 function recordActivity(type, threads) {
@@ -128,12 +132,21 @@ class Report {
     str += `\n\r ` + `Name`.padEnd(nameLength)
     str += ` |  Sec/min    |  Money/max          | wTime `
     for (const server of top ) {
-      str += `\n\r ${server.name.padEnd(nameLength)} | ` +
-        `${formatNumber(server.security).padStart(5)}/` +
-        `${formatNumber(server.minSecurity).padEnd(5)} | ` +
-        `${formatMoney(server.data.moneyAvailable).padStart(9)}/` +
-        `${formatMoney(server.maxMoney).padEnd(9)} | ` +
-        `${formatDuration(ns.formulas.hacking.weakenTime(server.data, fetchPlayer()))}`
+      if(hasFormulas(ns)){
+        str += `\n\r ${server.name.padEnd(nameLength)} | ` +
+          `${formatNumber(server.security).padStart(5)}/` +
+          `${formatNumber(server.minSecurity).padEnd(5)} | ` +
+          `${formatMoney(server.data.moneyAvailable).padStart(9)}/` +
+          `${formatMoney(server.maxMoney).padEnd(9)} | ` +
+          `${formatDuration(ns.formulas.hacking.weakenTime(server.data, fetchPlayer()))}`
+      } else {
+        str += `\n\r ${server.name.padEnd(nameLength)} | ` +
+          `${formatNumber(server.security).padStart(5)}/` +
+          `${formatNumber(server.minSecurity).padEnd(5)} | ` +
+          `${formatMoney(server.data.moneyAvailable).padStart(9)}/` +
+          `${formatMoney(server.maxMoney).padEnd(9)} | ` +
+          `${formatDuration(ns.getWeakenTime(server.name))}`
+      }
     }
     return str
   }
@@ -282,7 +295,13 @@ class Targeter {
     if (record) recordActivity(file, minerManager.totalThreads)
   }
 
-  hackTime() { return this.ns.formulas.hacking.hackTime(this.target.data, fetchPlayer())}
+  hackTime() {
+    if(hasFormulas(this.ns)){
+      return this.ns.formulas.hacking.hackTime(this.target.data, fetchPlayer())
+    } else{
+      return this.ns.getHackTime(this.target.name)
+    }
+  }
   growTime() { return this.hackTime() * growTimeMultiplier }
   weakTime() { return this.hackTime() * weakenTimeMultiplier }
 
@@ -290,12 +309,24 @@ class Targeter {
     if ( this.target.data.moneyAvailable/this.target.maxMoney < 0.1) return [0,0,0]
 
     const player = fetchPlayer()
-    const formulas = this.ns.formulas.hacking
+    let formulas = null
+    if(hasFormulas(this.ns)){
+      formulas = this.ns.formulas.hacking
+    }
     const server = this.target.data
     const decimal = getLSItem('hackpercent')
-    const threads = Math.ceil(decimal/formulas.hackPercent(server, player))
-    const amountHacked = threads * formulas.hackPercent(server, player) * server.moneyAvailable
-
+    let threads = -1
+    if(hasFormulas(this.ns)){
+      threads = Math.floor(decimal/formulas.hackPercent(server, player))
+    } else {
+      threads = Math.floor(decimal/this.ns.hackAnalyze(this.target.name))
+    }
+    let amountHacked = -1
+    if(hasFormulas(this.ns)){
+      amountHacked = threads * formulas.hackPercent(server, player) * server.moneyAvailable
+    } else {
+      amountHacked = threads * this.ns.hackAnalyze(this.target.name) * server.moneyAvailable
+    }
     return [threads, amountHacked]
   }
 
@@ -310,10 +341,22 @@ class Targeter {
   growthInfo(replacing) {
     const player = fetchPlayer()
     const server = this.target.data
-    const formulas = this.ns.formulas.hacking
-
+    let formulas = null
+    if(hasFormulas(this.ns)){
+      const formulas = this.ns.formulas.hacking
+    }
+    
     let multiplier = server.moneyMax/(Math.max(1, server.moneyMax - replacing))
-    let threads = Math.ceil((multiplier-1)/(formulas.growPercent(server, 1, player)-1))
+    let threads = -1
+    if(formulas != null){
+      threads = Math.ceil((multiplier-1)/(formulas.growPercent(server, 1, player)-1))
+    } else {
+      threads = Math.ceil(multiplier/this.ns.growthAnalyze(this.target.name, 1+multiplier))
+    }
+    if(threads == -1){
+      this.ns.tprint("ERROR: Why is threads -1? (growthInfo)")
+    }
+    let security = 2 * serverFortifyAmount * threads
     return [threads, multiplier]
   }
 
