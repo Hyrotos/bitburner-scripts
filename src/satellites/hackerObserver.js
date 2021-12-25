@@ -331,10 +331,19 @@ class Targeter {
   }
 
   adjustedMoneyAvailable() {
-    const formulas = this.ns.formulas.hacking
+    let formulas = null
+    if(hasFormulas(this.ns)){
+      formulas = this.ns.formulas.hacking
+    }
     const player = fetchPlayer()
     const server = this.target.data
-    const alreadyGrowingBy = formulas.growPercent(server, this.threadCount('grow.js'), player)
+    let alreadyGrowingBy
+    if(formulas != null){
+      alreadyGrowingBy = formulas.growPercent(server, this.threadCount('grow.js'), player)
+    } else {
+      alreadyGrowingBy = this.ns.growthAnalyze(server, this.threadCount('grow.js'), player)
+    }
+
     return this.target.data.moneyAvailable * alreadyGrowingBy
   }
 
@@ -343,7 +352,7 @@ class Targeter {
     const server = this.target.data
     let formulas = null
     if(hasFormulas(this.ns)){
-      const formulas = this.ns.formulas.hacking
+      formulas = this.ns.formulas.hacking
     }
     
     let multiplier = server.moneyMax/(Math.max(1, server.moneyMax - replacing))
