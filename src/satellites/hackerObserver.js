@@ -6,6 +6,7 @@ import {
 } from 'helpers.js'
 import { networkMap, fetchServer } from 'network.js'
 import { BestHack } from 'bestHack.js'
+import { calculateServerGrowth } from '../helpers'
 
 // avoid calling getScriptRam
 const ramSizes = {
@@ -341,7 +342,7 @@ class Targeter {
     if(formulas != null){
       alreadyGrowingBy = formulas.growPercent(server, this.threadCount('grow.js'), player)
     } else {
-      alreadyGrowingBy = this.ns.growthAnalyze(server, this.threadCount('grow.js'), player)
+      alreadyGrowingBy = calculateServerGrowth(server, this.threadCount('grow.js'), player)
     }
 
     return this.target.data.moneyAvailable * alreadyGrowingBy
