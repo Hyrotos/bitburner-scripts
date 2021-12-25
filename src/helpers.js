@@ -619,7 +619,7 @@ export function calculateServerGrowth(server, threads, p, cores = 1) {
 
   const serverBaseGrowthRate = 1.03 // Unadjusted Growth rate
   const serverMaxGrowthRate = 1.0035 // Maximum possible growth rate (max rate accounting for server security)
-  const bn = getLSItem('bitnode', bn)
+  const bn = getLSItem('bitnode')
 
   //Get adjusted growth rate, which accounts for server security
   const growthRate = serverBaseGrowthRate;
