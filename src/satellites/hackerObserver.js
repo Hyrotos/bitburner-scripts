@@ -3,7 +3,8 @@ import {
   fetchPlayer,
   getLSItem, setLSItem,
   formatDuration, formatNumber, formatMoney,
-  calculateServerGrowth
+  calculateServerGrowth, calculateWeakenTime,
+  calculateHackingTime, calculatePercentMoneyHacked
 } from 'helpers.js'
 import { networkMap, fetchServer } from 'network.js'
 import { BestHack } from 'bestHack.js'
@@ -146,7 +147,7 @@ class Report {
           `${formatNumber(server.minSecurity).padEnd(5)} | ` +
           `${formatMoney(server.data.moneyAvailable).padStart(9)}/` +
           `${formatMoney(server.maxMoney).padEnd(9)} | ` +
-          `${formatDuration(ns.getWeakenTime(server.name))}`
+          `${formatDuration(calculateWeakenTime(server.data, fetchPlayer()))}`
       }
     }
     return str
@@ -297,10 +298,10 @@ class Targeter {
   }
 
   hackTime() {
-    if(hasFormulas(this.ns)){
+    if(hasFormulas(this.ns)) {
       return this.ns.formulas.hacking.hackTime(this.target.data, fetchPlayer())
-    } else{
-      return this.ns.getHackTime(this.target.name)
+    } else {
+      return calculateHackingTime(this.target.data, fetchPlayer())
     }
   }
   growTime() { return this.hackTime() * growTimeMultiplier }
@@ -320,13 +321,13 @@ class Targeter {
     if(hasFormulas(this.ns)){
       threads = Math.floor(decimal/formulas.hackPercent(server, player))
     } else {
-      threads = Math.floor(decimal/this.ns.hackAnalyze(this.target.name))
+      threads = Math.floor(decimal/calculatePercentMoneyHacked(server, player))
     }
     let amountHacked = -1
     if(hasFormulas(this.ns)){
       amountHacked = threads * formulas.hackPercent(server, player) * server.moneyAvailable
     } else {
-      amountHacked = threads * this.ns.hackAnalyze(this.target.name) * server.moneyAvailable
+      amountHacked = threads * calculatePercentMoneyHacked(server, player) * server.moneyAvailable
     }
     return [threads, amountHacked]
   }
@@ -361,7 +362,7 @@ class Targeter {
     if(formulas != null){
       threads = Math.ceil((multiplier-1)/(formulas.growPercent(server, 1, player)-1))
     } else {
-      threads = Math.ceil(multiplier/this.ns.growthAnalyze(this.target.name, 1+multiplier))
+      threads = Math.ceil((multiplier-1)/(calculateServerGrowth(server, 1, player)-1))
     }
     if(threads == -1){
       this.ns.tprint("ERROR: Why is threads -1? (growthInfo)")

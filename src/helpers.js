@@ -591,7 +591,7 @@ export function checkNsInstance(ns) {
   const hackTimeMultiplier = 5;
   const hackingTime =
     (hackTimeMultiplier * skillFactor) /
-    (player.hacking_speed_mult);// * calculateIntelligenceBonus(player.intelligence, 1));
+    (player.hacking_speed_mult * calculateIntelligenceBonus(player.intelligence, 1));
 
   return hackingTime;
 }
@@ -636,4 +636,30 @@ export function calculateServerGrowth(server, threads, p, cores = 1) {
   //Apply serverGrowth for the calculated number of growth cycles
   const coreBonus = 1 + (cores - 1) / 16;
   return Math.pow(adjGrowthRate, numServerGrowthCyclesAdjusted * p.hacking_grow_mult * coreBonus);
+}
+
+export function calculateIntelligenceBonus(intelligence, weight = 1) {
+  return 1 + (weight * Math.pow(intelligence, 0.8)) / 600;
+}
+
+/**
+ * Returns the percentage of money that will be stolen from a server if
+ * it is successfully hacked (returns the decimal form, not the actual percent value)
+ */
+ export function calculatePercentMoneyHacked(server, player) {
+  // Adjust if needed for balancing. This is the divisor for the final calculation
+  const balanceFactor = 240;
+  const bn = getLSItem('bitnode');
+
+  const difficultyMult = (100 - server.hackDifficulty) / 100;
+  const skillMult = (player.hacking - (server.requiredHackingSkill - 1)) / player.hacking;
+  const percentMoneyHacked = (difficultyMult * skillMult * player.hacking_money_mult) / balanceFactor;
+  if (percentMoneyHacked < 0) {
+    return 0;
+  }
+  if (percentMoneyHacked > 1) {
+    return 1;
+  }
+
+  return percentMoneyHacked * bn.ScriptHackMoney;
 }
