@@ -574,3 +574,42 @@ export function checkNsInstance(ns) {
     throw "The first argument to this function should be a 'ns' instance."
   return ns
 }
+
+/**
+ * Returns time it takes to complete a hack on a server, in seconds
+ */
+ export function calculateHackingTime(server, player) {
+  const difficultyMult = server.requiredHackingSkill * server.hackDifficulty;
+
+  const baseDiff = 500;
+  const baseSkill = 50;
+  const diffFactor = 2.5;
+  let skillFactor = diffFactor * difficultyMult + baseDiff;
+  // tslint:disable-next-line
+  skillFactor /= player.hacking + baseSkill;
+
+  const hackTimeMultiplier = 5;
+  const hackingTime =
+    (hackTimeMultiplier * skillFactor) /
+    (player.hacking_speed_mult);// * calculateIntelligenceBonus(player.intelligence, 1));
+
+  return hackingTime;
+}
+
+/**
+ * Returns time it takes to complete a grow operation on a server, in seconds
+ */
+export function calculateGrowTime(server, player) {
+  const growTimeMultiplier = 3.2; // Relative to hacking time. 16/5 = 3.2
+
+  return growTimeMultiplier * calculateHackingTime(server, player);
+}
+
+/**
+ * Returns time it takes to complete a weaken operation on a server, in seconds
+ */
+export function calculateWeakenTime(server, player) {
+  const weakenTimeMultiplier = 4; // Relative to hacking time
+
+  return weakenTimeMultiplier * calculateHackingTime(server, player);
+}

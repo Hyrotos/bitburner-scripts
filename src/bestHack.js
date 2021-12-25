@@ -1,6 +1,5 @@
-import { fetchPlayer } from 'helpers.js'
+import { fetchPlayer, calculateWeakenTime } from 'helpers.js'
 import { networkMapFree } from 'network.js'
-import { calculateWeakenTime } from '/formulae/hacking.js'
 
 const maxMoneyCoefficient = 1.25
 const growthCoefficient = 1.1
