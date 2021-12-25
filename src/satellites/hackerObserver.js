@@ -3,10 +3,10 @@ import {
   fetchPlayer,
   getLSItem, setLSItem,
   formatDuration, formatNumber, formatMoney,
+  calculateServerGrowth
 } from 'helpers.js'
 import { networkMap, fetchServer } from 'network.js'
 import { BestHack } from 'bestHack.js'
-import { calculateServerGrowth } from '../helpers'
 
 // avoid calling getScriptRam
 const ramSizes = {
