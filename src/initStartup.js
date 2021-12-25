@@ -64,7 +64,6 @@ const filesToDownload = [
   'weaken.js',
   'workForFactions.js',
 ]
-const baseUrl = 'https://raw.githubusercontent.com/hyrotos/bitburner-scripts/main/src'
 
 /**
  * @param {NS} ns
@@ -72,11 +71,13 @@ const baseUrl = 'https://raw.githubusercontent.com/hyrotos/bitburner-scripts/mai
 export async function main(ns) {
   ns.disableLog("sleep")
 
+  const baseUrl = `https://raw.githubusercontent.com/hyrotos/bitburner-scripts/${ns.args[1]}/src`
+
   for ( let filename of filesToDownload ) {
     ns.scriptKill(filename, 'home')
     ns.rm(filename)
     await ns.sleep(50)
-    await download(ns, filename)
+    await download(ns, filename, baseUrl)
   }
   await ns.sleep(50)
   ns.tprint('Killed and deleted old scripts.')
@@ -88,7 +89,7 @@ export async function main(ns) {
   ns.spawn('/startup/run.js', 1)
 }
 
-export async function download(ns, filename) {
+export async function download(ns, filename, baseUrl) {
   const fileUrl = filename.includes("/") ? filename : "/" + filename;
   const path = baseUrl + fileUrl
   ns.tprint(`Trying to download ${path}`)
