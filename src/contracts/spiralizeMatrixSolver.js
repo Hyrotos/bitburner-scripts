@@ -20,7 +20,8 @@ import { CodingContractWrapper } from '/contracts/CodingContractWrapper.js'
 /** @param {NS} ns **/
 export async function main(ns) {
   const codingContractor = new CodingContractWrapper(ns)
-  const answer = solve(await codingContractor.extractData())
+  const data = await codingContractor.extractData()
+  const answer = solve(data)
   await codingContractor.sendSolution(answer)
 }
 
