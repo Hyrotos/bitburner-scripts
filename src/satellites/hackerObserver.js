@@ -17,7 +17,7 @@ const ramSizes = {
 }
 
 // Configuration. Change these as desired.
-const reservedRam = 750
+const reservedRam = 50
 const bufferTime = 30 //ms
 const hackDecimal = 0.05
 const sleepTime = 1000 //ms
