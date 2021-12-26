@@ -48,7 +48,8 @@ Save and exit nano and write in console: `run start.js` then press enter.
 ```js
 // startup everything. If you've run this at least once and want to skip
 // downloading/overwriting files, do `run startup/run.js` instead
-alias start="run start.js"
+alias startd="run start.js"
+alias start="run startup/run.js"
 
 // run arbitrary ns processes and helper functions, see doProcess for examples
 alias do="run doProcess.js"
