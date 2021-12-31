@@ -33,7 +33,7 @@ export async function main(ns) {
     return runGetKarma(ns, crimePS)
   } */
 
-  if ( toolsCount() >= 5 ) {
+  if ( toolsCount() >= 0 ) {
     if ( crimePS ) {
       announce(ns, 'Switching from crime to grinding faction rep')
       ns.kill(crimePS.pid, 'home')
