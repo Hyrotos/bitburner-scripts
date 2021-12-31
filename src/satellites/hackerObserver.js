@@ -315,18 +315,9 @@ class Targeter {
     }
     const server = this.target.data
     const decimal = getLSItem('hackpercent')
-    let threads = -1
-    if(hasFormulas(this.ns)){
-      threads = Math.floor(decimal/formulas.hackPercent(server, player))
-    } else {
-      threads = Math.floor(decimal/calculatePercentMoneyHacked(server, player))
-    }
-    let amountHacked = -1
-    if(hasFormulas(this.ns)){
-      amountHacked = threads * formulas.hackPercent(server, player) * server.moneyAvailable
-    } else {
-      amountHacked = threads * calculatePercentMoneyHacked(server, player) * server.moneyAvailable
-    }
+    const threads = Math.ceil(decimal/formulas.hackPercent(server, player))
+    const amountHacked = Math.min(this.target.maxMoney, threads * formulas.hackPercent(server, player) * server.moneyAvailable)
+
     return [threads, amountHacked]
   }
 
@@ -356,17 +347,8 @@ class Targeter {
     }
     
     let multiplier = server.moneyMax/(Math.max(1, server.moneyMax - replacing))
-    let threads = -1
-    if(formulas != null){
-      threads = Math.ceil((multiplier-1)/(formulas.growPercent(server, 1, player)-1))
-    } else {
-      threads = Math.ceil((multiplier-1)/(calculateServerGrowth(server, 1, player)-1))
-    }
-    if(threads == -1){
-      this.ns.tprint("ERROR: Why is threads -1? (growthInfo)")
-    }
-    let security = 2 * serverFortifyAmount * threads
-    return [threads, multiplier]
+    let threads = Math.log(multiplier)/Math.log(formulas.growPercent(server, 1, player))
+    return [Math.ceil(threads), multiplier]
   }
 
   weakenInfo(security) {
