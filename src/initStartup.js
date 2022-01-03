@@ -25,6 +25,7 @@ const filesToDownload = [
   '/hacknet/levelUpgrader.js',
   '/hacknet/ramUpgrader.js',
   '/hacknet/startup.js',
+  '/qol/add-tab-control-to-editor.js',
   '/satellites/activityObserver.js',
   '/satellites/backdoorObserver.js',
   '/satellites/contractsObserver.js',
