@@ -21,7 +21,7 @@ export async function main(ns) {
     return
   }
 
-/*   const inAGang = await inAnyGang(ns)
+  const inAGang = await inAnyGang(ns)
   if ( !inAGang && canJoinGang(ns) ) {
     ns.print(`inAGang: ${inAGang}, canJoin: ${canJoinGang(ns)}`)
     ns.print('trying to join a gang')
@@ -31,7 +31,7 @@ export async function main(ns) {
   if ( !inAGang && !canJoinGang(ns) ) {
     ns.print(`inAGang: ${inAGang}, canJoin: ${canJoinGang(ns)}`)
     return runGetKarma(ns, crimePS)
-  } */
+  }
 
   if ( toolsCount() >= 0 ) {
     if ( crimePS ) {
