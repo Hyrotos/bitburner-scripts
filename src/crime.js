@@ -64,7 +64,7 @@ export async function main(ns) {
     let chance = await fetch(ns, `ns.getCrimeChance('${crime}')`,`/Temp/crimeChance.txt`)
     time = await fetch(ns, `ns.commitCrime('${crime}')`, `/Temp/commitCrime.txt`)
 
-    ns.print(`Attempting ${crime} in ${ns.tFormat(time)} with chance ${ns.nFormat(chance, '0%')} ...`)
+    ns.print(`Attempting ${crime} in ${ns.tFormat(time)} with chance ${ns.nFormat(chance, '0.00%')} ...`)
     await ns.sleep(time * 0.75)
 
     again = fetchPlayer().busy
